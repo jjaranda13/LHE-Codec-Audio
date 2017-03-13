@@ -300,7 +300,7 @@ def getSymbolsListStereo(lhe_file, n_sym_channel0, n_sym_channel1, n_samples):
 	in_chain = "false"
 
 	#CHANNEL0
-	for i in range(0, n_sym_channel0):
+	for i in range(0, len(sym_channel0)):
 
 		# If we get 'X', we change it for the correct number of '1' symbols in a row
 		if sym_channel0[i] == 'X':
@@ -332,7 +332,7 @@ def getSymbolsListStereo(lhe_file, n_sym_channel0, n_sym_channel1, n_samples):
 			final_sym_channel0[i] = prov_sym_channel0[i]
 
 	#CHANNEL1
-	for i in range(0, n_sym_channel1):
+	for i in range(0, len(sym_channel1)):
 
 		# If we get 'X', we change it for the correct number of '1' symbols in a row
 		if sym_channel1[i] == 'X':
@@ -357,7 +357,7 @@ def getSymbolsListStereo(lhe_file, n_sym_channel0, n_sym_channel1, n_samples):
 	prov_sym_channel1 = ''.join(prov_sym_channel1)
 
 	# Channel1 Amplitude saving
-	for i in range(len(final_sym_channel0), len(final_sym_channel0) + len(final_sym_channel1)):
+	for i in range(0, len(final_sym_channel1)):
 		try:
 			final_sym_channel1[i] = int(prov_sym_channel1[i])
 		except:
