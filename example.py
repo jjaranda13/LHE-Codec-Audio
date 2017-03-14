@@ -88,7 +88,7 @@ if __name__=='__main__':
 
 		# Binary decoder
 		n_sym_channel0, n_sym_channel1, first_amp_channel0, first_amp_channel1, n_samples, max_sample, min_sample = getDataStereo(path_stereo)
-		#sym_channel0, sym_channel1 = getSymbolsListStereo(path_stereo, n_sym_channel0, n_sym_channel1, n_samples)
+		sym_channel0, sym_channel1 = getSymbolsListStereo(path_stereo, n_sym_channel0, n_sym_channel1, n_samples)
 
 		n_sym, first_amp, n_samples, max_sample, min_sample = getData(path)
 		sym = getSymbolsList(path, n_sym, n_samples)
@@ -96,6 +96,8 @@ if __name__=='__main__':
 		# Audio decoder
 		print "translating syms to hops..."
 		hops = symbolsToHops(sym)
+		hops_channel0 = symbolsToHops(sym_channel0)
+		hops_channel1 = symbolsToHops(sym_channel1)
 		print "syms to hops done"
 		print "translating hops to samples..."
 		samples = hopsToSamples(hops, first_amp, n_samples, max_sample, min_sample)
@@ -104,10 +106,6 @@ if __name__=='__main__':
 
 		print "hops to samples done"
 		getAudio(samples, 'output_lhe/audio/output_audio.wav')
-
-		for i in range (0, n_samples):
-			if (samples_channel0[i] != result_channel0[i] - 32768):
-				print result_channel0[i], samples_channel0[i]
 
 		getAudioStereo(samples_channel0, samples_channel1,'output_lhe/audio/output_audio_stereo.wav')
 		print "Output audio file created."

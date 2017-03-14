@@ -167,25 +167,34 @@ def writeFileStereo(sym_channel0, sym_channel1, first_amp_channel0, first_amp_ch
 
 	# -- PAYLOAD -- #
 
-	f = open("output_lhe/" + "payload" + ".lhe", "wb")
+	f1 = open("output_lhe/" + "payloadChannel1" + ".lhe", "wb")
+	f0 = open("output_lhe/" + "payloadChannel0" + ".lhe", "wb")
 
 	# We write the not codified amplitude
 	for item in sym_channel0:
-  		f.write(str(item))
+  		f0.write(str(item))
 	for item in sym_channel1:
-  		f.write(str(item))
-  	f.close()
+  		f1.write(str(item))
+  	f1.close()
+  	f0.close()
 
-	enc = huff.Encoder("output_lhe/payload.lhe") # We codify the amplitude with Huffman
-	enc.write("output_lhe/" + "payload_huff" + ".lhe") # We save the codified amplitude
+	enc0 = huff.Encoder("output_lhe/payloadChannel0.lhe") # We codify the amplitude with Huffman
+	enc0.write("output_lhe/" + "payload_huff_channel0" + ".lhe") # We save the codified amplitude
+	statinfo = os.stat("output_lhe/payload_huff_channel0.lhe")
+	channel0PayloadSize = statinfo.st_size
+
+	enc1 = huff.Encoder("output_lhe/payloadChannel1.lhe") # We codify the amplitude with Huffman
+	enc1.write("output_lhe/" + "payload_huff_channel1" + ".lhe") # We save the codified amplitude
+	statinfo = os.stat("output_lhe/payload_huff_channel1.lhe")
+	channel1PayloadSize = statinfo.st_size
 
 	# -- HEADER -- #
 
 	f = open("output_lhe/header.lhe", "wb")
 
 	f.write(struct.pack("B", 0)) # We are in basic LHE, so we write a '00000000' byte. This wont be used in this codec
-	f.write(struct.pack("i", len(sym_channel0))) # Length of the samples symbols list (4 bytes)
-	f.write(struct.pack("i", len(sym_channel1))) # Length of the samples symbols list (4 bytes)
+	f.write(struct.pack("i", channel0PayloadSize)) # Length of the samples symbols list (4 bytes)
+	f.write(struct.pack("i", channel1PayloadSize)) # Length of the samples symbols list (4 bytes)
 	f.write(struct.pack("i", first_amp_channel0)) # First amplitude value, so the decoder has a reference (4 bytes)
 	f.write(struct.pack("i", first_amp_channel1)) # First amplitude value, so the decoder has a reference (4 bytes)
 	f.write(struct.pack("i", n_samples)) # Number of total samples of the audio (4 bytes)
@@ -200,7 +209,10 @@ def writeFileStereo(sym_channel0, sym_channel1, first_amp_channel0, first_amp_ch
 	f2 = open("output_lhe/header.lhe", "rb") # Writing header
 	f.write(f2.read())
 	f2.close()
-	f2 = open("output_lhe/" + "payload_huff" + ".lhe", "rb") # Writing payload
+	f2 = open("output_lhe/" + "payload_huff_channel0" + ".lhe", "rb") # Writing payload
+	f.write(f2.read())
+	f2.close()
+	f2 = open("output_lhe/" + "payload_huff_channel1" + ".lhe", "rb") # Writing payload
 	f.write(f2.read())
 	f2.close()
 	f.close()
@@ -208,5 +220,7 @@ def writeFileStereo(sym_channel0, sym_channel1, first_amp_channel0, first_amp_ch
 	# -- REMOVING OTHER FILES -- #
 
 	os.remove("output_lhe/header.lhe")
-	os.remove("output_lhe/payload.lhe")
-	os.remove("output_lhe/payload_huff.lhe")
+	os.remove("output_lhe/payloadChannel0.lhe")
+	os.remove("output_lhe/payloadChannel1.lhe")
+	os.remove("output_lhe/payload_huff_channel0.lhe")
+	os.remove("output_lhe/payload_huff_channel1.lhe")
